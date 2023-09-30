@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/my_database
+    username: mmusica
+    password: root
+  jpa:
+    hibernate.ddl-auto: update
+    generate-ddl: true
+    show-sql: true
+
+server:
+  tomcat:
+    relaxed-query-chars: "|,{,},[,]"
