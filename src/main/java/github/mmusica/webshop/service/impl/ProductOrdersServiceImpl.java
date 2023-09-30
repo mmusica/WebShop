@@ -1,8 +1,8 @@
 package github.mmusica.webshop.service.impl;
 
+import github.mmusica.webshop.dto.AddProductDTO;
 import github.mmusica.webshop.dto.OrdersDTO;
 import github.mmusica.webshop.dto.ProductOrdersDTO;
-import github.mmusica.webshop.dto.ProductDTO;
 import github.mmusica.webshop.model.Customer;
 import github.mmusica.webshop.model.Orders;
 import github.mmusica.webshop.model.Product;
@@ -29,7 +29,7 @@ public class ProductOrdersServiceImpl implements ProductOrdersService {
     private final CustomerToCustomerDTOMapper customerToCustomerDTOMapper;
 
     @Override
-    public ProductOrdersDTO createOrder(Long customerId, List<ProductDTO> productDTOList) {
+    public ProductOrdersDTO createOrder(Long customerId, List<AddProductDTO> addProductDTOList) {
 
         Optional<Customer> customerOptional = customerRepository.findById(customerId);
         if (customerOptional.isEmpty())
@@ -42,14 +42,14 @@ public class ProductOrdersServiceImpl implements ProductOrdersService {
                 .productOrders(productOrdersList)
                 .build();
 
-        productDTOList.forEach(productDTO -> {
-            Optional<Product> productOptional = productRepository.findById(productDTO.getId());
-            if(productOptional.isEmpty()) throw new RuntimeException("Product with id %s not found".formatted(productDTO.getId()));
+        addProductDTOList.forEach(addProductDTO -> {
+            Optional<Product> productOptional = productRepository.findById(addProductDTO.getId());
+            if(productOptional.isEmpty()) throw new RuntimeException("Product with id %s not found".formatted(addProductDTO.getId()));
             Product product = productOptional.get();
             ProductOrders productOrder = ProductOrders.builder()
                     .product(product)
                     .order(order)
-                    .quantity(productDTO.getQuantity())
+                    .quantity(addProductDTO.getQuantity())
                     .build();
             productOrdersList.add(productOrder);
         });
@@ -66,7 +66,7 @@ public class ProductOrdersServiceImpl implements ProductOrdersService {
 
         return ProductOrdersDTO.builder()
                 .ordersDTO(ordersDTO)
-                .productDTOList(productDTOList)
+                .addProductDTOList(addProductDTOList)
                 .build();
     }
 }
