@@ -9,4 +9,6 @@ public interface ProductService {
     Product createProduct(Product productDTO);
 
     List<ProductDTO> getAllProductsPageable(int page, int size);
+
+    Product getProductById(Long id);
 }

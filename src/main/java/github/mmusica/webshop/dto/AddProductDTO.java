@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class AddProductDTO {
-    private Long id;
+    private ProductDTO productDTO;
     private int quantity;
 }

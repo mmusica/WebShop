@@ -24,4 +24,9 @@ public class OrdersProductController {
             @RequestBody List<AddProductDTO> products) {
         return new ResponseEntity<>(productOrdersService.createOrder(id, products), HttpStatus.CREATED);
     }
+
+    @GetMapping("/{customerId}")
+    public ResponseEntity<List<ProductOrdersDTO>> getAllOrdersByCustomerId(@PathVariable("customerId") Long customerId){
+        return new ResponseEntity<>(productOrdersService.getAllOrdersByCustomerId(customerId), HttpStatus.OK);
+    }
 }

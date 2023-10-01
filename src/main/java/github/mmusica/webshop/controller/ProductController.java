@@ -25,4 +25,8 @@ public class ProductController {
         return new ResponseEntity<>(productService.getAllProductsPageable(page,size), HttpStatus.CREATED);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable("id") Long id){
+        return new ResponseEntity<>(productService.getProductById(id), HttpStatus.OK);
+    }
 }

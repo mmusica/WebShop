@@ -10,5 +10,4 @@ import java.util.List;
 public class ProductOrdersDTO {
     OrdersDTO ordersDTO;
     List<AddProductDTO> addProductDTOList;
-
 }

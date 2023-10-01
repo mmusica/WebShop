@@ -8,4 +8,6 @@ import java.util.List;
 public interface ProductOrdersService {
 
     ProductOrdersDTO createOrder(Long customerId, List<AddProductDTO> productList);
+
+    List<ProductOrdersDTO> getAllOrdersByCustomerId(Long customerId);
 }

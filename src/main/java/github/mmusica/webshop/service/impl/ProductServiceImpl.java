@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -28,5 +29,15 @@ public class ProductServiceImpl implements ProductService {
         PageRequest pageRequest = PageRequest.of(page,size);
         Page<Product> allProducts = productRepository.findAll(pageRequest);
         return allProducts.stream().map(productToProductDTOMapper).toList();
+    }
+
+    @Override
+    public Product getProductById(Long id) {
+        Optional<Product> product = productRepository.findById(id);
+        if(product.isPresent()){
+            return product.get();
+        }else{
+            throw new RuntimeException("Product with id: %s not found".formatted(id));
+        }
     }
 }
