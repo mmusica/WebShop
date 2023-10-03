@@ -1,8 +1,8 @@
 package github.mmusica.webshop.service.impl;
 
-import github.mmusica.webshop.dto.AddProductDTO;
 import github.mmusica.webshop.dto.OrdersDTO;
 import github.mmusica.webshop.dto.ProductOrdersDTO;
+import github.mmusica.webshop.dto.ProductWithQuantityDTO;
 import github.mmusica.webshop.model.Customer;
 import github.mmusica.webshop.model.Orders;
 import github.mmusica.webshop.model.Product;
@@ -15,6 +15,7 @@ import github.mmusica.webshop.service.ProductOrdersService;
 import github.mmusica.webshop.service.mapper.ProductOrdersListMapper;
 import github.mmusica.webshop.service.mapper.impl.CustomerToCustomerDTOMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ProductOrdersServiceImpl implements ProductOrdersService {
 
@@ -33,7 +35,7 @@ public class ProductOrdersServiceImpl implements ProductOrdersService {
     private final CustomerToCustomerDTOMapper customerToCustomerDTOMapper;
 
     @Override
-    public ProductOrdersDTO createOrder(Long customerId, List<AddProductDTO> addProductDTOList) {
+    public ProductOrdersDTO createOrder(Long customerId, List<ProductWithQuantityDTO> productWithQuantityDTOList) {
 
         Optional<Customer> customerOptional = customerRepository.findById(customerId);
         if (customerOptional.isEmpty())
@@ -46,14 +48,14 @@ public class ProductOrdersServiceImpl implements ProductOrdersService {
                 .productOrders(productOrdersList)
                 .build();
 
-        addProductDTOList.forEach(addProductDTO -> {
-            Optional<Product> productOptional = productRepository.findById(addProductDTO.getProductDTO().getId());
-            if(productOptional.isEmpty()) throw new RuntimeException("Product with id %s not found".formatted(addProductDTO.getProductDTO()));
+        productWithQuantityDTOList.forEach(productWithQuantityDTO -> {
+            Optional<Product> productOptional = productRepository.findById(productWithQuantityDTO.getProductDTO().getId());
+            if(productOptional.isEmpty()) throw new RuntimeException("Product with id %s not found".formatted(productWithQuantityDTO.getProductDTO()));
             Product product = productOptional.get();
             ProductOrders productOrder = ProductOrders.builder()
                     .product(product)
                     .order(order)
-                    .quantity(addProductDTO.getQuantity())
+                    .quantity(productWithQuantityDTO.getQuantity())
                     .build();
             productOrdersList.add(productOrder);
         });
@@ -70,13 +72,14 @@ public class ProductOrdersServiceImpl implements ProductOrdersService {
 
         return ProductOrdersDTO.builder()
                 .ordersDTO(ordersDTO)
-                .addProductDTOList(addProductDTOList)
+                .productWithQuantityDTOList(productWithQuantityDTOList)
                 .build();
     }
 
     @Override
     public List<ProductOrdersDTO> getAllOrdersByCustomerId(Long customerId) {
 
+        log.debug("getAllOrdersByCustomerId ----------------");
         Optional<Customer> customer = customerRepository.findById(customerId);
         Customer gotCustomer;
         if(customer.isEmpty()) throw new RuntimeException("No customer with id: %s found".formatted(customerId));
@@ -87,9 +90,9 @@ public class ProductOrdersServiceImpl implements ProductOrdersService {
 
         List<ProductOrders> productOrdersList = new ArrayList<>();
         ordersList.forEach(order -> {
-            List<ProductOrders> productOrdersByOrderList = productOrdersRepository.findAllByOrder(order);
-            if(productOrdersByOrderList.isEmpty()) throw new RuntimeException("No productOrders for Order id: %s".formatted(order.getId()));
-            productOrdersList.addAll(productOrdersByOrderList);
+            List<ProductOrders> productOrders = order.getProductOrders();
+            if(productOrders.isEmpty()) throw new RuntimeException("No productOrders for Order id: %s".formatted(order.getId()));
+            productOrdersList.addAll(productOrders);
         });
         return productOrdersListToProductOrdersDTOListMapper.apply(productOrdersList);
     }

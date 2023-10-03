@@ -9,5 +9,5 @@ import java.util.List;
 @Builder
 public class ProductOrdersDTO {
     OrdersDTO ordersDTO;
-    List<AddProductDTO> addProductDTOList;
+    List<ProductWithQuantityDTO> productWithQuantityDTOList;
 }

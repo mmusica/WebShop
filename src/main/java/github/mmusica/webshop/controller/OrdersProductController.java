@@ -1,8 +1,8 @@
 package github.mmusica.webshop.controller;
 
 
-import github.mmusica.webshop.dto.AddProductDTO;
 import github.mmusica.webshop.dto.ProductOrdersDTO;
+import github.mmusica.webshop.dto.ProductWithQuantityDTO;
 import github.mmusica.webshop.service.ProductOrdersService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,7 +21,7 @@ public class OrdersProductController {
     @PostMapping("/{customerId}")
     public ResponseEntity<ProductOrdersDTO> addOrderForCustomer(
             @PathVariable(name = "customerId") Long id,
-            @RequestBody List<AddProductDTO> products) {
+            @RequestBody List<ProductWithQuantityDTO> products) {
         return new ResponseEntity<>(productOrdersService.createOrder(id, products), HttpStatus.CREATED);
     }
 
