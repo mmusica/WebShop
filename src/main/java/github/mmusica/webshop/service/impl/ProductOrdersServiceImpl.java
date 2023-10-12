@@ -1,5 +1,7 @@
 package github.mmusica.webshop.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import github.mmusica.webshop.dto.OrdersDTO;
 import github.mmusica.webshop.dto.ProductOrdersDTO;
 import github.mmusica.webshop.dto.ProductWithQuantityDTO;
@@ -11,6 +13,7 @@ import github.mmusica.webshop.repository.CustomerRepository;
 import github.mmusica.webshop.repository.OrdersRepository;
 import github.mmusica.webshop.repository.ProductOrdersRepository;
 import github.mmusica.webshop.repository.ProductRepository;
+import github.mmusica.webshop.service.PostRequestSender;
 import github.mmusica.webshop.service.ProductOrdersService;
 import github.mmusica.webshop.service.mapper.ProductOrdersListMapper;
 import github.mmusica.webshop.service.mapper.impl.CustomerToCustomerDTOMapper;
@@ -33,6 +36,7 @@ public class ProductOrdersServiceImpl implements ProductOrdersService {
     private final OrdersRepository ordersRepository;
     private final ProductOrdersListMapper<List<ProductOrdersDTO>> productOrdersListToProductOrdersDTOListMapper;
     private final CustomerToCustomerDTOMapper customerToCustomerDTOMapper;
+    private final PostRequestSender postRequestSender;
 
     @Override
     public ProductOrdersDTO createOrder(Long customerId, List<ProductWithQuantityDTO> productWithQuantityDTOList) {
@@ -70,10 +74,20 @@ public class ProductOrdersServiceImpl implements ProductOrdersService {
                 .customer(customerToCustomerDTOMapper.apply(customerOptional.get()))
                 .build();
 
-        return ProductOrdersDTO.builder()
+        ProductOrdersDTO productOrdersDTO = ProductOrdersDTO.builder()
                 .ordersDTO(ordersDTO)
                 .productWithQuantityDTOList(productWithQuantityDTOList)
                 .build();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            String json = mapper.writeValueAsString(productOrdersDTO);
+            String s = postRequestSender.sendPostRequest("http://127.0.0.1:5000/orders/ai", json);
+            log.info(s);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
+        }
+
+        return productOrdersDTO;
     }
 
     @Override
