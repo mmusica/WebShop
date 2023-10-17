@@ -1,7 +1,5 @@
 package github.mmusica.webshop.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import github.mmusica.webshop.dto.OrdersDTO;
 import github.mmusica.webshop.dto.ProductOrdersDTO;
 import github.mmusica.webshop.dto.ProductWithQuantityDTO;
@@ -78,14 +76,15 @@ public class ProductOrdersServiceImpl implements ProductOrdersService {
                 .ordersDTO(ordersDTO)
                 .productWithQuantityDTOList(productWithQuantityDTOList)
                 .build();
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            String json = mapper.writeValueAsString(productOrdersDTO);
-            String s = postRequestSender.sendPostRequest("http://127.0.0.1:5000/orders/ai", json);
-            log.info(s);
-        } catch (JsonProcessingException e) {
-            log.error(e.getMessage());
-        }
+        // Currenty work in progress :)
+//        ObjectMapper mapper = new ObjectMapper();
+//        try {
+//            String json = mapper.writeValueAsString(productOrdersDTO);
+//            String s = postRequestSender.sendPostRequest("http://127.0.0.1:5000/orders/ai", json);
+//            log.info(s);
+//        } catch (JsonProcessingException e) {
+//            log.error(e.getMessage());
+//        }
 
         return productOrdersDTO;
     }
